@@ -18,8 +18,7 @@ library(readr)
 library(xml2)
 library(stringr)
 
-joined <- read_rds("~/projects data/ps_7/ps_7shiny/joined.rds") 
-
+joined <- read_rds("joined.rds") 
 
 
 
@@ -38,7 +37,7 @@ ui <- fluidPage(
         label = "Choose an observation",
         choices = c("feminism", "gender", "turnout"),
         selected = "feminism"
-      )),
+      )), 
     
     # Show a plot of the generated distribution
     mainPanel(

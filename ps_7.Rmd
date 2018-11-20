@@ -20,14 +20,14 @@ library(stringr)
 ```
 
 ```{r loading_data, message=FALSE, cache = TRUE, warning=FALSE, error= FALSE, echo = FALSE}
-#Loading the data into one dataframe using map_dfr. 
+#Downloading and unzipping the file.
  download.file(url = "https://goo.gl/ZRCBda",
               destfile = "master.zip",
             quiet = TRUE, 
             mode = "wb") 
 unzip("master.zip") 
 
-
+#Loading the data into one dataframe using map_dfr. I used .id = "source" to be able to differentiate each poll.
 filenames <- dir_ls("2018-live-poll-results-master/data/")
 
 data <- map_dfr(filenames, read_csv, .id = "source")
@@ -36,7 +36,7 @@ data <- map_dfr(filenames, read_csv, .id = "source")
 ```
 
 ```{r sorting_feminism, message=FALSE, warning=FALSE, error= FALSE, echo = FALSE}
-#Here I am making a table to show the relationship between feminism and intended party vote. I had to sort out the party categories and use final weight, and spread and mutate response. 
+#I chose three variables to see if there's any relationship between intended party vote and feminism. The variables are, whether they support feminism or not, their gender, and their turnout rate (to see how likely it is that their vote will make a difference on issues of feminism.) Here I am making a table to show the relationship between feminism and intended party vote. I had to sort out the party categories and use final weight, and spread and mutate response. 
 feminism <- data %>%
 mutate(response = case_when(
     response %in% c("Rep") ~ "Rep", 
@@ -87,7 +87,6 @@ mutate(response = case_when(
   select(-total) %>%
    filter(turnout_class != "[DO NOT READ] Don't know/Refused")
 
-
 ```
 
 ```{r preparing_bind, message=FALSE, warning=FALSE, error= FALSE, echo = FALSE}
@@ -111,8 +110,6 @@ Turnout <- turnout %>%
 joined <- Feminism %>%
   bind_rows(Gender) %>%
   bind_rows(Turnout) 
-joined 
-
 
 
 
@@ -127,3 +124,6 @@ write_rds(joined, "ps_7shiny/joined.rds")
 
 ```
 
+Here is a shiny app showing the relationship between intended party vote and feminism. The variables are: whether they support feminism or not, their gender, and their turnout rate (to see how likely it is that their vote will make a difference on issues of feminism.) 
+
+https://kai-potter.shinyapps.io/ps_7shiny/ 
