@@ -1,0 +1,96 @@
+---
+title: "ps_7"
+author: "Kai Potter"
+date: "11/18/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(knitr)
+library(fs)
+library(lubridate)
+library(formattable)
+library(foreign)
+library(kableExtra)
+library(readr)
+library(xml2)
+library(stringr)
+```
+
+```{r loading_data, message=FALSE, cache = TRUE, warning=FALSE, error= FALSE, echo = FALSE}
+ download.file(url = "https://goo.gl/ZRCBda",
+              destfile = "master.zip",
+            quiet = TRUE, 
+            mode = "wb") 
+unzip("master.zip") 
+
+
+filenames <- dir_ls("2018-live-poll-results-master/data/")
+
+data <- map_dfr(filenames, read_csv, .id = "source")
+ 
+
+```
+
+```{r}
+feminism <- data %>%
+mutate(response = case_when(
+    response %in% c("Rep") ~ "Rep", 
+    response %in% c("Dem") ~ "Dem",
+    response %in% c("Und", "3", "4", "5") ~ "Und")) %>% 
+  group_by(FEMINISM, response) %>% 
+  tally(wt = final_weight) %>%
+  filter(!is.na(response)) %>%
+  spread(key = "response", value = "n") %>%
+  mutate(total = Dem + Rep + Und) %>%
+  mutate(Dem = 100*Dem / total, Rep = 100*Rep/total, Und = 100*Und/total, total = total*100/total) %>%
+  select(-total) %>%
+   filter(FEMINISM != "[DO NOT READ] Don't know/Refused") %>%
+  View()
+```
+
+
+```{r}
+gender <- data %>%
+mutate(response = case_when(
+    response %in% c("Rep") ~ "Rep", 
+    response %in% c("Dem") ~ "Dem",
+    response %in% c("Und", "3", "4", "5") ~ "Und")) %>% 
+  group_by(gender, response) %>% 
+  tally(wt = final_weight) %>%
+  filter(!is.na(response)) %>%
+  spread(key = "response", value = "n") %>%
+  mutate(total = Dem + Rep + Und) %>%
+  mutate(Dem = 100*Dem / total, Rep = 100*Rep/total, Und = 100*Und/total, total = total*100/total) %>%
+  select(-total) %>%
+   filter(gender != "[DO NOT READ] Don't know/Refused") %>%
+  View()
+```
+
+  
+```{r}
+turnout <- data %>%
+mutate(response = case_when(
+    response %in% c("Rep") ~ "Rep", 
+    response %in% c("Dem") ~ "Dem",
+    response %in% c("Und", "3", "4", "5") ~ "Und")) %>% 
+  group_by(turnout_class, response) %>% 
+  tally(wt = final_weight) %>%
+  filter(!is.na(response)) %>%
+  spread(key = "response", value = "n") %>%
+  mutate(total = Dem + Rep + Und) %>%
+  mutate(Dem = 100*Dem / total, Rep = 100*Rep/total, Und = 100*Und/total, total = total*100/total) %>%
+  select(-total) %>%
+   filter(turnout_class != "[DO NOT READ] Don't know/Refused") %>%
+  View()
+
+
+```
+
+
+```{r}
+
+```
+
