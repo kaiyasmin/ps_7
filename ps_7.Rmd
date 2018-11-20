@@ -16,7 +16,7 @@ library(foreign)
 library(kableExtra)
 library(readr)
 library(xml2)
-library(stringr)
+library(stringr) 
 ```
 
 ```{r loading_data, message=FALSE, cache = TRUE, warning=FALSE, error= FALSE, echo = FALSE}
@@ -90,7 +90,7 @@ mutate(response = case_when(
 ```
 
 ```{r preparing_bind, message=FALSE, warning=FALSE, error= FALSE, echo = FALSE}
-#Here I am renaming the categories and mutating them to create a new variable column so it's easy to bind everything together. 
+#Here I am renaming the categories and mutating them to create a new variable column so it's easy to bind everything together. I had to rename the first column otherwise there would have been issues with using bind_rows(as it uses the first column to do so.)
 
 
 Feminism <- feminism %>% 
