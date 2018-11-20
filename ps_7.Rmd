@@ -20,6 +20,7 @@ library(stringr)
 ```
 
 ```{r loading_data, message=FALSE, cache = TRUE, warning=FALSE, error= FALSE, echo = FALSE}
+#Loading the data into one dataframe using map_dfr. 
  download.file(url = "https://goo.gl/ZRCBda",
               destfile = "master.zip",
             quiet = TRUE, 
@@ -34,7 +35,8 @@ data <- map_dfr(filenames, read_csv, .id = "source")
 
 ```
 
-```{r}
+```{r sorting_feminism, message=FALSE, warning=FALSE, error= FALSE, echo = FALSE}
+#Here I am making a table to show the relationship between feminism and intended party vote. I had to sort out the party categories and use final weight, and spread and mutate response. 
 feminism <- data %>%
 mutate(response = case_when(
     response %in% c("Rep") ~ "Rep", 
@@ -47,12 +49,12 @@ mutate(response = case_when(
   mutate(total = Dem + Rep + Und) %>%
   mutate(Dem = 100*Dem / total, Rep = 100*Rep/total, Und = 100*Und/total, total = total*100/total) %>%
   select(-total) %>%
-   filter(FEMINISM != "[DO NOT READ] Don't know/Refused") %>%
-  View()
+   filter(FEMINISM != "[DO NOT READ] Don't know/Refused") 
 ```
 
 
-```{r}
+```{r sorting_gender, message=FALSE, warning=FALSE, error= FALSE, echo = FALSE}
+#Here I am making a table to show the relationship between gender and intended party vote. I had to sort out the party categories and use final weight, and spread and mutate response. 
 gender <- data %>%
 mutate(response = case_when(
     response %in% c("Rep") ~ "Rep", 
@@ -65,12 +67,12 @@ mutate(response = case_when(
   mutate(total = Dem + Rep + Und) %>%
   mutate(Dem = 100*Dem / total, Rep = 100*Rep/total, Und = 100*Und/total, total = total*100/total) %>%
   select(-total) %>%
-   filter(gender != "[DO NOT READ] Don't know/Refused") %>%
-  View()
+   filter(gender != "[DO NOT READ] Don't know/Refused") 
 ```
 
-  
-```{r}
+
+```{r sorting_turnout, message=FALSE, warning=FALSE, error= FALSE, echo = FALSE}
+#Here I am making a table to show the relationship between turnout and intended party vote. I had to sort out the party categories and use final weight, and spread and mutate response. 
 turnout <- data %>%
 mutate(response = case_when(
     response %in% c("Rep") ~ "Rep", 
@@ -83,14 +85,45 @@ mutate(response = case_when(
   mutate(total = Dem + Rep + Und) %>%
   mutate(Dem = 100*Dem / total, Rep = 100*Rep/total, Und = 100*Und/total, total = total*100/total) %>%
   select(-total) %>%
-   filter(turnout_class != "[DO NOT READ] Don't know/Refused") %>%
-  View()
+   filter(turnout_class != "[DO NOT READ] Don't know/Refused")
+
+
+```
+
+```{r preparing_bind, message=FALSE, warning=FALSE, error= FALSE, echo = FALSE}
+#Here I am renaming the categories and mutating them to create a new variable column so it's easy to bind everything together. 
+
+
+Feminism <- feminism %>% 
+  rename(category = FEMINISM) %>%
+  mutate(variable = "feminism")
+
+Gender <- gender %>% 
+  rename(category = gender) %>%
+  mutate(variable = "gender")
+
+Turnout <- turnout %>% 
+  rename(category = turnout_class) %>%
+  mutate(variable = "turnout")
+
+#Here I bind rows to make it easier to manipulate data in app.R. 
+
+joined <- Feminism %>%
+  bind_rows(Gender) %>%
+  bind_rows(Turnout) 
+joined 
+
+
+
+
 
 
 ```
 
 
-```{r}
+```{r writing_rds, message=FALSE, warning=FALSE, error= FALSE, echo = FALSE}
+#Here I use write_rds to transfer the data over to app.R. 
+write_rds(joined, "ps_7shiny/joined.rds")
 
 ```
 

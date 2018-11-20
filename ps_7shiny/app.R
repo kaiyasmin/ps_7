@@ -28,7 +28,7 @@ joined <- read_rds("~/projects data/ps_7/ps_7shiny/joined.rds")
 ui <- fluidPage(
   
   # Application title
-  titlePanel("Relationship between intended party vote and feminism."),
+  titlePanel("Relationship between intended party vote and factors related to feminism."),
   
   # Sidebar with a slider input for number of bins 
   sidebarLayout(
